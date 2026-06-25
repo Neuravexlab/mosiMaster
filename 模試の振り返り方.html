@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>模試の振り返り方｜「なぜ解けなかったか」を解体する</title>
+<style>
+  :root {
+    --bg: #F9F8FC;
+    --surface: #FFFFFF;
+    --text: #1A1A1A;
+    --accent: #4A1A6B;
+    --accent-light: #F2EBFA;
+    --accent-mid: #7A4FA5;
+    --danger: #C0392B;
+    --danger-light: #FDF0EF;
+    --success: #1A6B3C;
+    --success-light: #EAF6EE;
+    --warn: #7A5C00;
+    --warn-light: #FDF8E8;
+    --rule: #E0D8EE;
+    --code-bg: #F5F0FA;
+    --radius: 8px;
+    --gap: 4.5em;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+    font-size: 17px;
+    line-height: 1.9;
+    padding: 0 1em;
+  }
+
+  .container { max-width: 740px; margin: 0 auto; padding: 3em 0 6em; }
+
+  h1 {
+    font-size: 1.7em; font-weight: 900; line-height: 1.5;
+    letter-spacing: -0.02em; color: var(--accent);
+    border-left: 6px solid var(--accent); padding-left: 0.6em; margin-bottom: 2em;
+  }
+
+  nav {
+    background: var(--accent-light); border-radius: var(--radius);
+    padding: 1.4em 1.8em; margin-bottom: var(--gap);
+    border-left: 4px solid var(--accent-mid);
+  }
+  nav p.nav-title { font-weight: 800; color: var(--accent); margin-bottom: 0.8em; font-size: 0.95em; letter-spacing: 0.05em; }
+  nav ol { margin: 0; padding-left: 1.4em; color: var(--accent); font-size: 0.93em; line-height: 2.2; }
+  nav a { color: var(--accent); text-decoration: none; }
+
+  h2 { font-size: 1.25em; font-weight: 800; color: var(--text); margin-top: var(--gap); margin-bottom: 1.2em; padding-bottom: 0.4em; border-bottom: 2px solid var(--rule); }
+  h2.chapter { font-size: 1.3em; background: var(--accent); color: #fff; padding: 0.5em 0.8em; border-radius: var(--radius); border: none; }
+  h3 { font-size: 1.05em; font-weight: 700; color: var(--accent); margin-top: var(--gap); margin-bottom: 0.8em; }
+
+  p { margin-bottom: var(--gap); color: var(--text); }
+
+  blockquote {
+    background: var(--accent-light); border-left: 4px solid var(--accent-mid);
+    border-radius: 0 var(--radius) var(--radius) 0; padding: 1.2em 1.4em; margin-bottom: var(--gap);
+  }
+  blockquote p { margin-bottom: 0.6em; color: var(--accent); font-weight: 600; }
+  blockquote p:last-child { margin-bottom: 0; }
+
+  strong { color: var(--accent); font-weight: 700; }
+
+  pre {
+    background: var(--code-bg); border-radius: var(--radius); padding: 1.4em 1.6em;
+    font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', monospace;
+    font-size: 0.88em; line-height: 2.3; overflow-x: auto;
+    margin-bottom: var(--gap); white-space: pre-wrap; word-break: break-all;
+  }
+
+  table { width: 100%; border-collapse: collapse; margin-bottom: var(--gap); font-size: 0.92em; }
+  th { background: var(--accent); color: #fff; padding: 0.6em 0.8em; text-align: left; font-weight: 700; }
+  td { padding: 0.6em 0.8em; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  tr:nth-child(even) td { background: var(--accent-light); }
+
+  table.compare th { background: var(--accent); color: #fff; }
+  table.compare td.ng { color: #9A80B0; font-weight: 400; background: #F8F4FC; }
+  table.compare td.ok { color: var(--accent); font-weight: 800; font-size: 1.05em; background: var(--accent-light); }
+
+  hr { border: none; border-top: 2px solid var(--rule); margin: var(--gap) 0; }
+  ul, ol { padding-left: 1.6em; margin-bottom: var(--gap); }
+  li { margin-bottom: 0.5em; }
+
+  .how-label { display: inline-block; background: var(--accent); color: #fff; font-size: 0.78em; font-weight: 800; padding: 0.15em 0.55em; border-radius: 4px; margin-right: 0.4em; vertical-align: middle; letter-spacing: 0.05em; }
+
+  .how-block { margin-bottom: var(--gap); }
+  .how-block .step { margin-bottom: 2em; padding: 1.2em 1.4em; background: var(--surface); border-radius: var(--radius); border-left: 3px solid var(--accent-mid); }
+  .how-block .step-label { display: block; font-weight: 800; color: var(--accent); font-size: 0.9em; letter-spacing: 0.03em; margin-bottom: 0.6em; }
+  .how-block .step-body { color: var(--text); line-height: 2.1; }
+  .how-block .step-body .ex { display: block; background: var(--code-bg); border-radius: 4px; padding: 0.8em 1em; margin-top: 0.8em; font-size: 0.9em; line-height: 2.2; }
+
+  /* 思考プロセス分解カード */
+  .process-table { width: 100%; border-collapse: collapse; margin-bottom: var(--gap); font-size: 0.9em; }
+  .process-table th { background: var(--accent); color: #fff; padding: 0.55em 0.9em; font-weight: 800; font-size: 0.85em; text-align: left; }
+  .process-table td { padding: 0.65em 0.9em; border-bottom: 1px solid var(--rule); vertical-align: top; line-height: 1.8; }
+  .process-table tr:nth-child(even) td { background: var(--accent-light); }
+  .process-table td.phase { font-weight: 800; color: var(--accent); white-space: nowrap; }
+  .process-table td.question { font-size: 0.88em; color: #444; }
+  .process-table td.cause { font-size: 0.88em; }
+
+  /* ミス分類バッジ */
+  .badge { display: inline-block; font-size: 0.78em; font-weight: 800; padding: 0.1em 0.55em; border-radius: 4px; margin-right: 0.3em; }
+  .badge-a { background: #FDF0EF; color: #C0392B; border: 1px solid #C0392B; }
+  .badge-b { background: #FDF8E8; color: #7A5C00; border: 1px solid #7A5C00; }
+  .badge-c { background: #EAF6EE; color: #1A6B3C; border: 1px solid #1A6B3C; }
+  .badge-d { background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent-mid); }
+
+  /* 振り返りシート */
+  .sheet-box { background: var(--surface); border: 2px solid var(--accent-mid); border-radius: var(--radius); overflow: hidden; margin-bottom: var(--gap); }
+  .sheet-header { background: var(--accent); color: #fff; padding: 0.6em 1em; font-weight: 800; font-size: 0.9em; }
+  .sheet-body { padding: 1em 1.2em; font-size: 0.9em; line-height: 2.2; }
+  .sheet-row { display: flex; gap: 0.5em; margin-bottom: 0.6em; align-items: flex-start; }
+  .sheet-row:last-child { margin-bottom: 0; }
+  .sheet-q { flex-shrink: 0; font-weight: 800; color: var(--accent); min-width: 2em; }
+  .sheet-a { flex: 1; background: var(--code-bg); border-radius: 4px; padding: 0.3em 0.7em; min-height: 1.8em; }
+
+  .scene-box { background: var(--accent-light); border-radius: var(--radius); padding: 1.4em 1.6em; margin-bottom: var(--gap); border: 1px solid var(--accent-mid); }
+  .scene-box .scene-label { font-size: 0.8em; font-weight: 800; color: var(--accent-mid); letter-spacing: 0.08em; margin-bottom: 0.6em; display: block; }
+  .scene-box p { margin-bottom: 0; color: var(--accent); font-style: italic; line-height: 2; }
+
+  .action-box { background: var(--accent); color: #fff; border-radius: var(--radius); padding: 2em 2em; margin-top: var(--gap); }
+  .action-box h3 { color: #fff; font-size: 1.15em; margin-top: 0; margin-bottom: 1em; }
+  .action-box p { color: #D4B8F0; margin-bottom: 1em; }
+  .action-box ol { color: #D4B8F0; }
+  .action-box li { margin-bottom: 0.6em; }
+  .action-box .note { margin-top: 1.4em; font-size: 0.92em; color: #B090D8; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 1em; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>模試の振り返り方｜<br>「なぜ解けなかったか」を解体する</h1>
+
+<nav>
+  <p class="nav-title">目次</p>
+  <ol>
+    <li><a href="#purpose">模試の本当の目的</a></li>
+    <li><a href="#common">よくある振り返りのNG</a></li>
+    <li><a href="#score">点数別：振り返りの深さを変える</a></li>
+    <li><a href="#process">核心：思考プロセスを解体する</a></li>
+    <li><a href="#miss">ミスを4種類に分類する</a></li>
+    <li><a href="#how">振り返りの具体的なSTEP</a></li>
+    <li><a href="#note">振り返りノートの作り方</a></li>
+    <li><a href="#policy">最後に：今後の方針を言語化する</a></li>
+  </ol>
+</nav>
+
+<h2 id="purpose">模試の本当の目的</h2>
+
+<p>模試を受け終わったあと、何をしていますか？答え合わせをして、間違えた問題の解説を読んで、ノートに写して、終わり。この振り返り方では、次の模試で同じミスを繰り返します。</p>
+
+<p>模試の本当の目的は、<strong>「今の自分の実力と、ゴールとの差を把握して、明日からの勉強を変えること」</strong>です。点数そのものに意味があるのではなく、その点数を生み出した「自分の思考プロセスのどこに穴があるか」を特定することに意味があります。</p>
+
+<blockquote>
+  <p>模試は「テスト」ではなく「診断」である</p>
+  <p>結果に一喜一憂するのではなく、「今後の方針を決めるための材料」として使う</p>
+  <p>解けなかった問題は「失敗」ではなく「自分の穴が見えたラッキー」</p>
+</blockquote>
+
+<p>この意識で模試に向き合えると、振り返りの質が根本から変わります。</p>
+
+<hr>
+
+<h2 id="common">よくある振り返りのNG</h2>
+
+<table class="compare">
+  <tr><th>よくあるNG</th><th>なぜダメか</th></tr>
+  <tr><td class="ng">解説を読んで「なるほど」と思って終わる</td><td class="ok">「分かった」と「自分で解ける」は別物。同じ問題を自力で解き直すまでやっていない</td></tr>
+  <tr><td class="ng">間違えた問題の解答をノートに丸写しする</td><td class="ok">写す作業は「解いた」に含まれない。手が動いていても頭が動いていない。きれいなノートは芸術点のみ</td></tr>
+  <tr><td class="ng">「計算ミスだった」「凡ミスだった」で終わる</td><td class="ok">なぜその計算ミスをしたのかを言語化していない。原因を特定しないと次も同じミスを繰り返す</td></tr>
+  <tr><td class="ng">点数の推移をグラフ化して管理する</td><td class="ok">問題の難易度が毎回違うので実力が上がっているか下がっているか判別できない。メンタルが乱れるだけ</td></tr>
+  <tr><td class="ng">全問題を丁寧に復習する</td><td class="ok">時間の浪費。自信を持って解いた問題を何度も復習する必要はない。「怪しかった問題」に絞る</td></tr>
+  <tr><td class="ng">模試の翌週以降にじっくり復習する</td><td class="ok">記憶が薄れるほど復習の時間がかかる。当日〜翌日に、試験中の思考が鮮明なうちに行う</td></tr>
+</table>
+
+<hr>
+
+<h2 id="score">点数別：振り返りの深さを変える</h2>
+
+<p>点数によって、やるべき振り返りの深さが変わります。全員が同じ振り返りをする必要はありません。</p>
+
+<div class="how-block">
+  <div class="step">
+    <span class="step-label">6割以下の場合：深い分析より基礎に戻る</span>
+    <div class="step-body">
+      マークシート式で6割以下の場合、正直に言えば「勘や運で当たっている問題」が多数含まれています。この状態で1問1問丁寧に分析しても、分析している時間の方が無駄になります。
+      <span class="ex">
+        やるべきこと：<br>
+        ① ざっくり「どの分野が弱いか」を確認する（数学なら確率か微積か、英語なら単語か文法か）<br>
+        ② 「今の参考書のどこが甘いか」に気づく<br>
+        ③ 明日から基礎参考書に戻る決断をする<br><br>
+        やらなくていいこと：<br>
+        × 超難問を長時間かけて理解しようとする（今の実力では早い）<br>
+        × 全問の解説を読み込む（時間対効果が低い）<br><br>
+        振り返りにかける時間の目安：当日〜翌日の2時間以内
+      </span>
+    </div>
+  </div>
+  <div class="step">
+    <span class="step-label">6〜8割の場合：プロセスを丁寧に分析する</span>
+    <div class="step-body">
+      「なんとなく分かっているのに取れない」問題が存在する層です。この層こそ、思考プロセスの分析が最も効果的に機能します。解けた問題と解けなかった問題の「どこが違うか」が鮮明に見えてきます。
+      <span class="ex">
+        やるべきこと：<br>
+        ① 間違えた問題・自信がなかった問題に絞って深く分析する<br>
+        ② 「解けなかった思考のどのステップで詰まったか」を特定する（後述）<br>
+        ③ 戦術の振り返り：時間配分・解く順番は正しかったか<br>
+        ④ 今後の方針を紙に書き出す<br><br>
+        振り返りにかける時間の目安：当日〜翌日に2〜4時間
+      </span>
+    </div>
+  </div>
+  <div class="step">
+    <span class="step-label">8割以上の場合：戦術と精度を磨く</span>
+    <div class="step-body">
+      知識・技術の土台はある層です。残りの2割の失点パターンを徹底的に潰すことと、本番に向けた「戦術」の最適化が中心になります。
+      <span class="ex">
+        やるべきこと：<br>
+        ① 失点した問題の「ミスの種類」を分類する（後述の4分類で）<br>
+        ② 正解した問題でも「より良い解き方はなかったか」を確認する<br>
+        ③ 時間配分・問題を解く順番・見直しのタイミングを最適化する<br>
+        ④ マーキングミスなど本番で起きうる事故を潰す<br><br>
+        振り返りにかける時間の目安：当日〜翌日に1〜2時間（鮮度が命）
+      </span>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<h2 id="process" class="chapter">核心：思考プロセスを解体する</h2>
+
+<p>「解けなかった」で終わらせないための最大のポイントは、<strong>問題を解く思考プロセスを分解して、どのステップで詰まったかを特定すること</strong>です。これは数学でも英語でも現代文でも歴史でも、すべての科目に共通する普遍的な構造です。</p>
+
+<p>どんな問題を解くときも、頭の中ではこの6つのステップが動いています。「解けなかった」はこのどこかの話です。</p>
+
+<table class="process-table">
+  <tr><th style="width:16%">ステップ</th><th style="width:26%">やること</th><th style="width:26%">詰まっていたときの症状</th><th>各科目での具体例</th></tr>
+  <tr>
+    <td class="phase">① 問題を<br>把握する</td>
+    <td class="question">「何を問われているか」「何が与えられているか」を正確に読み取る</td>
+    <td class="cause">「読んだのに何をすればいいか分からない」「問いと違うことを答えた」</td>
+    <td class="cause" style="font-size:0.82em">数：条件の見落とし<br>英：設問の指示を誤読<br>現：「傍線部の説明」を求められているのに「筆者の主張」を答えた<br>歴：「なぜか」と「いつか」を混同</td>
+  </tr>
+  <tr>
+    <td class="phase">② 素材を<br>整理する</td>
+    <td class="question">与えられた情報・本文・資料を、使いやすい形に整理する（図・メモ・構造把握）</td>
+    <td class="cause">「問いは分かったが、どこから手をつけるか分からない」「頭の中が散らかっている」</td>
+    <td class="cause" style="font-size:0.82em">数：図を描かずに頭だけで考えようとする<br>英：本文を読みながら情報を整理していない<br>現：段落の役割・論理構造を把握せず読む<br>歴：時代・人物・因果関係を整理しない</td>
+  </tr>
+  <tr>
+    <td class="phase">③ 翻訳する</td>
+    <td class="question">問題の言葉・場面を「自分が知っている知識・解法・パターン」に結びつける</td>
+    <td class="cause">「知識はあったのに使えなかった」「解説を見て『あ、これか！知ってた！』となる」</td>
+    <td class="cause" style="font-size:0.82em">数：「整数解を求めよ」→積の形に翻訳できなかった<br>英：接続詞「however」を見て逆接の論理を翻訳できなかった<br>現：「筆者の主張」を問われているのに傍線部周辺しか探さなかった<br>歴：「背景」を問われているのに「内容」を答えた</td>
+  </tr>
+  <tr>
+    <td class="phase">④ 方針を<br>立てる</td>
+    <td class="question">「この問いに答えるには何をどの順番でやるか」の道筋を決める</td>
+    <td class="cause">「翻訳はできたが、何から始めるか迷った」「複数の解き方があってどれを選ぶか分からなかった」</td>
+    <td class="cause" style="font-size:0.82em">数：解法は分かるがどの公式から始めるか判断できなかった<br>英：先に設問を読むべきか本文を全部読むべきか判断できなかった<br>現：根拠を「本文から引く」か「自分の言葉で説明する」か迷った<br>歴：論述の構成（原因→経過→結果）が組み立てられなかった</td>
+  </tr>
+  <tr>
+    <td class="phase">⑤ 実行する</td>
+    <td class="question">方針通りに、正確に実行する（計算・記述・選択肢の絞り込み・解答用紙への転記）</td>
+    <td class="cause">「方針は正しかったのに実行段階でのミスで失点」「答えに至る過程で間違えた」</td>
+    <td class="cause" style="font-size:0.82em">数：符号ミス・移項ミス・計算ミス<br>英：正しい根拠を見つけたが選択肢の絞り込みを間違えた<br>現：根拠は分かっていたが記述が字数オーバーまたは不十分だった<br>歴：知識はあったが語句が不正確または漢字が違った</td>
+  </tr>
+  <tr>
+    <td class="phase">⑥ 吟味する</td>
+    <td class="question">答えを出した後に、問いに正確に答えているか・指示・条件を満たしているかを確認する</td>
+    <td class="cause">「できたと思い込んでチェックしなかった」「時間切れで確認できなかった」</td>
+    <td class="cause" style="font-size:0.82em">数：場合分け漏れ・単位ミス・問われているものと違う値を答えた<br>英：「本文に書かれていないもの」を選ぶ問いで本文にある選択肢を選んだ<br>現：字数制限・「〜を踏まえて」などの条件を満たしていなかった<br>歴：「〜の観点から述べよ」という指定を無視した</td>
+  </tr>
+</table>
+
+<h3><span class="how-label">HOW</span> 1問ごとにプロセスを特定する</h3>
+
+<div class="how-block">
+  <div class="step">
+    <span class="step-label">間違えた問題を解いたときの頭の動きを思い出す（フロー図）</span>
+    <div class="step-body">
+      以下の問いかけを順番にたどっていくと、自分がどのステップで詰まったかが特定できます。
+      <span class="ex">
+        【全科目共通の診断フロー】<br><br>
+        Q1：問題文を読んで「何をすればいいか」分かったか？<br>
+           → No → ①「把握」か③「翻訳」の問題<br>
+              ・問題文の意味自体が分からなかった → ①把握<br>
+              ・何を問われているかは分かったが、どう対処するか分からなかった → ③翻訳<br>
+           → Yes → Q2へ<br><br>
+        Q2：手が動いたか（書き始められたか、本文を探し始められたか）？<br>
+           → No → ②「素材整理」か④「方針」の問題<br>
+              ・情報が多くて頭が混乱した → ②素材整理<br>
+              ・何をすべきかは分かったが順番・手順が組み立てられなかった → ④方針<br>
+           → Yes → Q3へ<br><br>
+        Q3：実行の途中でミスをしたか？<br>
+           → Yes → ⑤「実行」の問題（計算ミス・選択肢の絞り間違い・語句の誤り）<br>
+           → No → Q4へ<br><br>
+        Q4：答えを出して合っていると思ったが、実際は違っていたか？<br>
+           → Yes → ⑥「吟味」の問題（条件の見落とし・指示の見落とし）<br><br>
+        Q5：時間が足りなかったか？<br>
+           → Yes → D「戦術ミス」（時間配分・解く順番を次回変える）
+      </span>
+    </div>
+  </div>
+  <div class="step">
+    <span class="step-label">「知識がなかった」と「知識はあったが使えなかった」を区別する</span>
+    <div class="step-body">
+      この2つは全く別の問題です。混同すると対策が変わります。
+      <span class="ex">
+        「知識がなかった」場合：<br>
+        → 解説を読んで初めて「この定理があるんだ」と気づいた<br>
+        → 今日初めて見た内容だった<br>
+        対策：参考書に戻って該当の知識を覚え直す<br><br>
+        「知識はあったが使えなかった」場合：<br>
+        → 解説を見て「あ、これか！知ってた！」となった<br>
+        → 参考書では解けるのに、初見だと気づかなかった<br>
+        対策：「この問題文のここを見たらこの解法を使う」という翻訳を言語化する<br><br>
+        この違いを明確にしないまま「復習した」としても、同じ問題形式で必ず詰まる
+      </span>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<h2 id="miss">ミスを4種類に分類する</h2>
+
+<p>間違えた問題を「バツ」で終わらせず、ミスの種類を4つに分類することで、対策が明確になります。</p>
+
+<div class="how-block">
+  <div class="step">
+    <span class="step-label">4種類のミスと対策</span>
+    <div class="step-body">
+      <span class="ex">
+        <span class="badge badge-a">A 知識の穴</span><br>
+        そもそも知らなかった・覚えていなかった<br>
+        例：単語の意味を知らなかった / 公式を忘れていた / 用語の定義が曖昧だった<br>
+        対策：参考書・単語帳に戻る。翌日・3日後・7日後で反復する<br><br>
+        <span class="badge badge-b">B 翻訳ミス</span><br>
+        知識はあったが、問題文から正しい解法を引き出せなかった<br>
+        例：「整数解を求めよ」を見ても因数分解もどきを思いつかなかった<br>
+        対策：「この問題文のキーワードを見たらこの解法を使う」という翻訳を書き出す<br><br>
+        <span class="badge badge-c">C 実行ミス</span><br>
+        方針は正しかったが、計算・記述の途中でミスをした<br>
+        例：符号ミス / 移項ミス / 条件の書き漏れ / 場合分け忘れ<br>
+        対策：自分のミスのパターンを記録する。計算ルーティンを増やす。解答の書き方を変える<br><br>
+        <span class="badge badge-d">D 戦術ミス</span><br>
+        知識も方針も正しかったが、時間・順番・精神面で失敗した<br>
+        例：この問題に時間をかけすぎた / 焦って読み飛ばした / マークをずらした<br>
+        対策：次の模試での行動ルールを決める（「大問2が難しかったら3に飛ぶ」など）
+      </span>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<h2 id="how" class="chapter">振り返りの具体的なSTEP</h2>
+
+<h3><span class="how-label">HOW</span> 当日〜翌日にやること</h3>
+
+<div class="how-block">
+  <div class="step">
+    <span class="step-label">STEP 1｜試験中に「怪しかった問題」にマークをつけておく</span>
+    <div class="step-body">
+      試験本番中に、以下のマークを問題用紙につけておいてください。後で振り返るときに「どの問題に時間をかけるか」を判断できます。
+      <span class="ex">
+        ◎：自信を持って解いた（→振り返りは軽くでOK）<br>
+        △：なんとなく解けたが自信がない（→優先的に振り返る）<br>
+        ✕：全く分からなかった・解けなかった（→プロセスを丁寧に分析）<br>
+        ？：時間がなくて解けなかった（→戦術の振り返り対象）<br><br>
+        マークをつける習慣がないと、後で「あの問題はどう解いたか」を思い出せない。<br>
+        試験中の思考が残っているうちに振り返ることが、復習時間を最大半分に短縮する。
+      </span>
+    </div>
+  </div>
+  <div class="step">
+    <span class="step-label">STEP 2｜まず自己採点をして「△・✕・？」に絞る</span>
+    <div class="step-body">
+      試験後、まず自己採点をします。◎でつけた問題は答えが合っているかだけ確認して終わりです。振り返りの時間は△・✕・？の問題に集中させます。
+      <span class="ex">
+        注意点：<br>
+        マーク式の場合、△でつけた問題が「合っていた」としても必ず振り返る。<br>
+        なぜなら「たまたま正解した問題」は次回は解けないから。<br><br>
+        振り返りの優先順位：<br>
+        ① ✕ で答えが間違っていた問題<br>
+        ② △ で答えが合っていたが自信がなかった問題<br>
+        ③ ？ で時間がなくて解けなかった問題（戦術の反省）
+      </span>
+    </div>
+  </div>
+  <div class="step">
+    <span class="step-label">STEP 3｜1問ずつ「思考プロセスのどこで詰まったか」を特定する</span>
+    <div class="step-body">
+      解説を読む前に、まず自分でもう一度解いてみてください。解説を先に読んでしまうと「なぜ自分がそこで詰まったか」が分からなくなります。
+      <span class="ex">
+        手順：<br>
+        ① 問題をもう一度読む<br>
+        ② 解説を見ずに解いてみる（5分程度）<br>
+        ③ 詰まった場所を確認する：①〜⑥のどのステップか？<br>
+        ④ そこで詰まった理由を一言で書く<br>
+           「公式を知らなかった（A）」<br>
+           「この言葉から解法が思い浮かばなかった（B）」<br>
+           「符号の処理を間違えた（C）」<br>
+        ⑤ 解説を読んで「正しい思考の流れ」を確認する<br>
+        ⑥ もう一度、解説を閉じて自力で解き直す
+      </span>
+    </div>
+  </div>
+  <div class="step">
+    <span class="step-label">STEP 4｜「気づきの翻訳」を一言で書く</span>
+    <div class="step-body">
+      解き直しができたら、次の一文をノートに書いてください。これが「同じ問題形式で次回は必ず気づける」状態を作ります。
+      <span class="ex">
+        書く形式：<br>
+        「問題文の（　　　）という表現を<br>
+         （　　　）と読み替えれば、この解法に気づけた」<br><br>
+        例：<br>
+        「"整数解を求めよ"を見たら<br>
+         "積の形に変形して約数を列挙する"と翻訳すれば良かった」<br><br>
+        「"少なくとも1つ"という言葉を見たら<br>
+         "余事象で考える"に即座につなげれば良かった」<br><br>
+        この一文を書いた問題は、次回同じ形式が出たときに必ず気づけるようになる。
+      </span>
+    </div>
+  </div>
+  <div class="step">
+    <span class="step-label">STEP 5｜戦術の振り返りを3行でまとめる</span>
+    <div class="step-body">
+      時間配分・解く順番・精神面について、「次の模試でこうする」を具体的に決めます。
+      <span class="ex">
+        書く形式（3行）：<br>
+        今回失敗した戦術：「大問3に時間をかけすぎて大問5が解けなかった」<br>
+        原因：「難しそうな問題で粘りすぎた」<br>
+        次回のルール：「1問に5分かけても解けなかったら飛ばして最後に戻る」<br><br>
+        模試は実戦練習の場。戦術を改善しながら本番に向けて精度を上げていく。
+      </span>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<h2 id="note">振り返りノートの作り方</h2>
+
+<p>振り返りノートの目的は「後でいつでも見返せること」と「同じミスを繰り返さないこと」の2つだけです。きれいなノートを作ることが目的ではありません。</p>
+
+<h3><span class="how-label">HOW</span> シンプルで使えるノートの形式</h3>
+
+<div class="how-block">
+  <div class="step">
+    <span class="step-label">書くべき3つの要素だけ書く</span>
+    <div class="step-body">
+      <span class="ex">
+        【要素1】問題そのもの<br>
+        問題をコピーして貼るか、問題番号と要点を書く<br>
+        「解答を写す」は不要。問題文だけでOK<br><br>
+        【要素2】詰まったプロセスと理由<br>
+        「①〜⑥のどこで詰まったか」を一言で<br>
+        例：「③翻訳：不定方程式と気づかなかった」<br><br>
+        【要素3】気づきの翻訳<br>
+        「次回この問題形式が出たら、こう考える」を一文で<br>
+        例：「"整数の組"を見たら積の形に変形することを最初に試みる」<br><br>
+        NG：解説をそのまま書き写す<br>
+        NG：きれいに色分けして時間をかけすぎる<br>
+        OK：手書きで雑でも「見返したときに分かる」程度に書く
+      </span>
+    </div>
+  </div>
+  <div class="step">
+    <span class="step-label">科目別にインデックスをつける</span>
+    <div class="step-body">
+      次の模試の前に「英語のミスだけ見返す」ができるように、科目・日付だけはきちんと書いておきます。
+      <span class="ex">
+        ノートの端に：科目（例：数学ⅡBC）+ 日付（例：6/15前進マーク）<br><br>
+        こうすることで：<br>
+        次の模試の前日に「数学のミス一覧」をさっと見返せる<br>
+        → 「この前こういうミスをした」という意識で本番に臨める
+      </span>
+    </div>
+  </div>
+  <div class="step">
+    <span class="step-label">ミスのパターンをリスト化する（自分のミス辞典を作る）</span>
+    <div class="step-body">
+      模試を重ねるうちに「自分が繰り返すミスのパターン」が見えてきます。それをリストにしておくと、模試の前の確認が効率化されます。
+      <span class="ex">
+        例）自分のミスパターンリスト：<br><br>
+        【B：翻訳ミス】<br>
+        ・「整数解を求めよ」→ 積の形を作る（不定方程式の基本形）<br>
+        ・「少なくとも1つ」→ 余事象で考える<br>
+        ・「実数解の個数」→ 判別式またはグラフの位置<br><br>
+        【C：実行ミス】<br>
+        ・負の数を二乗するとき符号を間違える → 必ず（）でくくる<br>
+        ・積分の計算で定数項の符号を落とす → 最後に展開して確認<br><br>
+        このリストを模試の前日に3分で見返すだけで、防げるミスが大幅に減る。
+      </span>
+    </div>
+  </div>
+</div>
+
+<div class="scene-box">
+  <span class="scene-label">📋 このやり方で3回模試を振り返った後のあなた</span>
+  <p>「自分のミスパターンリスト」が積み上がっています。模試の前日にそのリストを見返すと「あ、これ前回も同じミスをした」という項目がいくつかあることに気づく。そのミスを意識して本番に臨むと、防げるミスが明らかに減っている。模試が「受けて終わり」ではなく「次を変えるための材料」になっている状態です。</p>
+</div>
+
+<hr>
+
+<h2 id="policy">最後に：今後の方針を言語化する</h2>
+
+<p>振り返りの最後にやるべきことが1つあります。<strong>「今後の勉強をどう変えるか」を紙に書き出すこと</strong>です。これをやらないと、振り返りをどれだけ丁寧にやっても「ただ感想を述べただけ」で終わります。</p>
+
+<div class="sheet-box">
+  <div class="sheet-header">📝 振り返り後の方針シート（模試ごとに書く）</div>
+  <div class="sheet-body">
+    <div class="sheet-row"><span class="sheet-q">Q1</span><span class="sheet-a">今回の模試で一番よくできた科目・分野：</span></div>
+    <div class="sheet-row"><span class="sheet-q">Q2</span><span class="sheet-a">今回の模試で一番よくできなかった科目・分野：</span></div>
+    <div class="sheet-row"><span class="sheet-q">Q3</span><span class="sheet-a">A（知識の穴）のミスが多かった内容：</span></div>
+    <div class="sheet-row"><span class="sheet-q">Q4</span><span class="sheet-a">B（翻訳ミス）のミスが多かった問題形式：</span></div>
+    <div class="sheet-row"><span class="sheet-q">Q5</span><span class="sheet-a">C（実行ミス）で繰り返しているパターン：</span></div>
+    <div class="sheet-row"><span class="sheet-q">Q6</span><span class="sheet-a">次の模試までに変える戦術（時間配分・解く順番）：</span></div>
+    <div class="sheet-row"><span class="sheet-q">Q7</span><span class="sheet-a">明日から変えること（参考書・勉強法・時間配分）：</span></div>
+    <div class="sheet-row"><span class="sheet-q">Q8</span><span class="sheet-a">次の模試での目標（点数より「何を改善するか」）：</span></div>
+  </div>
+</div>
+
+<p>「もっと勉強しよう」という感想で終わってはいけません。「どの科目の何を、どのやり方で、いつから変えるか」まで書いて初めて、模試の振り返りは完了です。</p>
+
+<hr>
+
+<div class="action-box">
+  <h3>📌 今日のアクションプラン</h3>
+  <p><strong>今日受けた模試（または最近受けた模試）で、1問だけ振り返ってください。</strong></p>
+  <p>やり方はこれだけです：</p>
+  <ol>
+    <li>間違えた問題（または自信がなかった問題）を1問選ぶ</li>
+    <li>解説を見る前に、もう一度自力で解いてみる（5分）</li>
+    <li>「①〜⑥のどのステップで詰まったか」を一言で書く</li>
+    <li>「A知識・B翻訳・C実行・D戦術」のどのミスかを分類する</li>
+    <li>「次回この形式が出たら○○と考える」を一文で書く</li>
+    <li>解説を読んで、自力で解き直す</li>
+  </ol>
+  <p class="note">1問でいいです。まずこれだけ。これを毎回の模試で続けると、3回目には「自分のミスパターンリスト」ができています。そのリストが、本番で同じミスを繰り返さないための最強の武器になります。</p>
+</div>
+
+</div>
+</body>
+</html>
